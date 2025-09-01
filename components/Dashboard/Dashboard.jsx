@@ -1,6 +1,9 @@
-import { Link } from "react-router";
+import { Link, useNavigate } from "react-router";
+
 
 const Dashboard = ({ user, boards, deleteBoard }) => {
+  const navigate = useNavigate();
+
   return (
     <div className="max-w-5xl mx-auto p-6">
       <h1 className="text-3xl font-bold mb-2">Your Dashboard</h1>
@@ -20,23 +23,38 @@ const Dashboard = ({ user, boards, deleteBoard }) => {
                 <p className="text-sm text-gray-600 mb-1">
                   Due Date:{" "}
                   <span className="font-medium">
-                    {new Date(board.dueDate).toLocaleDateString()}
+                    {board.dueDate
+                      ? new Date(board.dueDate).toLocaleDateString()
+                      : "No date"}
                   </span>
                 </p>
                 <p className="text-sm text-gray-600 mb-4">
                   Start Date:{" "}
                   <span className="font-medium">
-                    {new Date(board.startDate).toLocaleDateString()}
+                    {board.startDate
+                      ? new Date(board.startDate).toLocaleDateString()
+                      : "No date"}
                   </span>
                 </p>
               </Link>
 
-              <button
-                className="w-full px-4 py-2 bg-[#F36A1B] text-white font-medium rounded-lg hover:bg-[#3C75A6] transition-colors"
-                onClick={() => deleteBoard(board._id)}
-              >
-                Delete Board
-              </button>
+              <div className="mt-4 flex">
+                <button
+                  className="w-full px-2 py-2 bg-[#F36A1B] text-white font-medium rounded-lg hover:bg-[#3C75A6] transition-colors mr-2"
+                  onClick={() => navigate(`/boards/${board._id}/edit`)}
+                >
+                  Edit Board
+                </button>
+                <button
+                  className="w-full px-4 py-2 bg-[#F36A1B] text-white font-medium rounded-lg hover:bg-[#3C75A6] transition-colors"
+                  onClick={async () => {
+                    await deleteBoard(board._id);
+                    navigate(`/`);
+                  }}
+                >
+                  Delete Board
+                </button>
+              </div>
             </div>
           ))}
         </div>

@@ -31,7 +31,7 @@ const getCardById = async (cardId) => {
       throw new Error(response.data.error);
     }
 
-    console.log("Card details:", response.data);
+    //console.log("Card details:", response.data);
     return response.data;
   } catch (error) {
     throw new Error(error);
@@ -139,6 +139,29 @@ const addCommentToCard = async (cardId, commentData) => {
   }
 };
 
+
+//get comment by id 
+const getCommentById = async (cardId , commentId) => {
+  try {
+    const response = await axios.get(
+      `${BASEURL}/${cardId}/comments/${commentId}`,
+      {
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem("token")}`,
+        },
+      }
+    );
+
+    if (response.data.error) {
+      throw new Error(response.data.error);
+    }
+
+    return response.data;
+  } catch (error) {
+    throw new Error(error);
+  }
+};
+
 const editCommentInCard = async (cardId, commentId, commentData) => {
   try {
     const response = await axios.put(
@@ -189,6 +212,7 @@ export {
   editCard,
   deleteCard,
   addCommentToCard,
+  getCommentById,
   editCommentInCard,
   deleteCommentFromCard,
 };

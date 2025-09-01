@@ -1,6 +1,28 @@
 import axios from "axios";
 const BASEURL = `${import.meta.env.VITE_BACK_END_SERVER_URL}/boards`;
 
+//get all users
+const getAllUsers = async () => {
+  try {
+    const response = await axios.get(`${BASEURL}/users`, {
+      headers: {
+        Authorization: `Bearer ${localStorage.getItem("token")}`,
+      },
+    });
+
+    if (response.data.error) {
+      throw new Error(response.data.error);
+    }
+
+    //console.log(response.data);
+    return response.data;
+  } catch (error) {
+    
+    console.error("Error fetching users:", error);
+    throw new Error(error);
+  }
+};
+
 const getAllBoards = async () => {
   try {
     const response = await axios.get(BASEURL, {
@@ -14,7 +36,7 @@ const getAllBoards = async () => {
       throw new Error(response.data.error);
     }
 
-    console.log("Fetched boards:", response.data);
+    //console.log("Fetched boards:", response.data);
     return response.data;
   } catch (error) {
     //console.error("Error fetching boards:", error);
@@ -98,6 +120,7 @@ const deleteBoard = async (boardId) => {
 
 //**Member routes  */
 
+
 const getBoardMembers = async (boardId) => {
   try {
     const response = await axios.get(`${BASEURL}/${boardId}/members`, {
@@ -116,11 +139,11 @@ const getBoardMembers = async (boardId) => {
   }
 };
 
-const addMemberToBoard = async (boardId, memberData) => {
+const addMemberToBoard = async (boardId, userId) => {
   try {
     const response = await axios.put(
-      `${BASEURL}/${boardId}/member`,
-      memberData,
+      `${BASEURL}/${boardId}/members`,
+      { userId },
       {
         headers: {
           Authorization: `Bearer ${localStorage.getItem("token")}`,
@@ -142,7 +165,7 @@ const addMemberToBoard = async (boardId, memberData) => {
 const removeMemberFromBoard = async (boardId, memberId) => {
   try {
     const response = await axios.put(
-      `${BASEURL}/${boardId}/member/${memberId}`,
+      `${BASEURL}/${boardId}/member/${memberId}`, { boardId, memberId },
       {
         headers: {
           Authorization: `Bearer ${localStorage.getItem("token")}`,
@@ -250,6 +273,42 @@ const deleteColumnFromBoard = async (boardId, columnId) => {
   }
 };
 
+const getUsersOnBoard = async (boardId) => {
+  try {
+    const response = await axios.get(`${BASEURL}/${boardId}/users`, {
+      headers: {
+        Authorization: `Bearer ${localStorage.getItem("token")}`,
+      },
+    });
+
+    if (response.data.error) {
+      throw new Error(response.data.error);
+    }
+
+    return response.data;
+  } catch (error) {
+    throw new Error(error);
+  }
+};
+
+const getUserById = async (boardId, userId) => {
+  try {
+    const response = await axios.get(`${BASEURL}/${boardId}/users/${userId}`, {
+      headers: {
+        Authorization: `Bearer ${localStorage.getItem("token")}`,
+      },
+    });
+
+    if (response.data.error) {
+      throw new Error(response.data.error);
+    }
+
+    return response.data;
+  } catch (error) {
+    throw new Error(error);
+  }
+};
+
 //**Add a card */
 //this is what card data will include
 // {
@@ -283,6 +342,7 @@ const addCardToColumn = async (boardId, columnId, cardData) => {
 };
 
 export {
+  getAllUsers,
   getAllBoards,
   getBoardById,
   createBoard,
@@ -295,5 +355,7 @@ export {
   editColumnInBoard,
   reorderColumnsInBoard,
   deleteColumnFromBoard,
+  getUsersOnBoard,
+  getUserById,
   addCardToColumn,
 };
