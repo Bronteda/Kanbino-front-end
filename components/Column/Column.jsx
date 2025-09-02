@@ -6,7 +6,7 @@ const Column = ({ column, boardId, handleRemoveColumn }) => {
   return (
     <div
       key={column._id}
-      className="w-80 min-w-[18rem] bg-gray-50 border border-gray-200 rounded-xl p-3 shadow-sm flex-shrink-0"
+      className="bg-gray-50 border border-gray-200 rounded-xl p-2 shadow-sm flex-shrink-0 min-w-[12rem] max-w-[16rem]"
     >
       {/* Column header */}
       <div className="mb-3">

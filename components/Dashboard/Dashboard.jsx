@@ -37,8 +37,7 @@ const Dashboard = ({ user, boards, deleteBoard }) => {
                   </span>
                 </p>
               </Link>
-              {/* Add that the owner of the board can only edit or delete the board */}
-              {user._id === board.owner && (
+              {user._id === board.ownerId && (
                 <div className="mt-4 flex">
                   <button
                     className="w-full px-2 py-2 bg-[#F36A1B] text-white font-medium rounded-lg hover:bg-[#3C75A6] transition-colors mr-2"

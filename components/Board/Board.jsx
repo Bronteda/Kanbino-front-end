@@ -14,16 +14,6 @@ const Board = ({ removeColumn }) => {
   const handleRemoveColumn = async (boardId, columnId) => {
     try {
       // Re-fetch board before attempting to delete column
-      const refreshedBoard = await boardServices.getBoardById(boardId);
-      const column = refreshedBoard.currentBoard.columns.find(
-        (col) => col._id === columnId
-      );
-      if (column && column.cardIds.length > 0) {
-        alert(
-          "You cannot delete a column that contains cards. Please remove all cards first."
-        );
-        return;
-      }
       await removeColumn(boardId, columnId);
       const boardData = await boardServices.getBoardById(boardId);
       setBoard(boardData.currentBoard);
@@ -140,17 +130,17 @@ const Board = ({ removeColumn }) => {
           <DragDropContext onDragEnd={onDragEnd}>
             <div className="relative">
               {/* subtle edge fades for the horizontal scroll */}
-              <div className="pointer-events-none absolute inset-y-0 left-0 w-10 bg-gradient-to-r from-slate-50/60 to-transparent" />
-              <div className="pointer-events-none absolute inset-y-0 right-0 w-10 bg-gradient-to-l from-slate-50/60 to-transparent" />
-              <div
-                className="flex gap-4 overflow-x-auto pb-4 pr-2"
-                style={{ minHeight: "1px", scrollSnapType: "x mandatory" }}
-              >
+
+              {/* Smaller board and columns using Tailwind only */}
+              <div className="flex flex-nowrap gap-2 overflow-x-auto pb-2">
                 {board &&
                 Array.isArray(board.columns) &&
                 board.columns.length > 0 ? (
                   board.columns.map((column) => (
-                    <div style={{ scrollSnapAlign: "start" }} key={column._id}>
+                    <div
+                      key={column._id}
+                      className="min-w-[12rem] max-w-[16rem]"
+                    >
                       <Column
                         column={column}
                         boardId={boardId}
@@ -165,7 +155,7 @@ const Board = ({ removeColumn }) => {
                 <Link to={`/boards/${board._id}/column`}>
                   <button
                     type="button"
-                    className="w-80 min-w-[18rem] h-fit self-start rounded-xl border-2 border-dashed border-gray-300 bg-white p-3 text-left text-gray-500 transition-colors hover:border-[#3C75A6] hover:text-[#3C75A6] shadow-sm"
+                    className="w-48 min-w-[12rem] h-fit self-start rounded-xl border-2 border-dashed border-gray-300 bg-white p-2 text-left text-gray-500 transition-colors hover:border-[#3C75A6] hover:text-[#3C75A6] shadow-sm"
                   >
                     + Add a column
                   </button>

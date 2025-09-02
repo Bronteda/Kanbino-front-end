@@ -3,6 +3,7 @@ import { useParams, Link, useNavigate } from "react-router";
 import * as cardServices from "../../services/cardServices";
 import * as boardServices from "../../services/boardServices";
 import Comment from "../Comment/Comment";
+import { findUserById } from "../../Utilities/usersHelper";
 import CommentForm from "../CommentForm/CommentForm";
 
 const CardDetails = ({ removeCard }) => {
@@ -15,17 +16,17 @@ const CardDetails = ({ removeCard }) => {
   const navigate = useNavigate();
 
   // Fetch card details first
-    const fetchCardDetails = async () => {
-      setLoading(true);
-      try {
-        const card = await cardServices.getCardById(cardId);
-        setCardDetails(card);
-      } catch (error) {
-        console.error("Error fetching card details:", error);
-      } finally {
-        setLoading(false);
-      }
-    };
+  const fetchCardDetails = async () => {
+    setLoading(true);
+    try {
+      const card = await cardServices.getCardById(cardId);
+      setCardDetails(card);
+    } catch (error) {
+      console.error("Error fetching card details:", error);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   //card details
   useEffect(() => {
@@ -34,27 +35,13 @@ const CardDetails = ({ removeCard }) => {
 
   //find assigned person
   useEffect(() => {
-    // Only fetch assigned user after card details are loaded
-    const assignedUserId = cardDetails?.assignedTo;
-    if (cardDetails && assignedUserId) {
-      setUserLoading(true);
-      boardServices
-        .getUsersOnBoard(boardId)
-        .then((allUsersOnBoard) => {
-          const userDetails = allUsersOnBoard.find(
-            (user) => user._id === assignedUserId
-          );
-          setAssignedUser(userDetails);
-        })
-        .catch((error) => {
-          console.error("Error fetching assigned user:", error);
-        })
-        .finally(() => {
-          setUserLoading(false);
-        });
-    } else {
-      setAssignedUser(null);
-    }
+    if (!cardDetails?.assignedTo) return;
+    const fetchAssignedUser = async () => {
+      const assignedUserId = cardDetails?.assignedTo;
+      const assignedUserDetails = await findUserById(boardId, assignedUserId);
+      setAssignedUser(assignedUserDetails);
+    };
+    fetchAssignedUser();
   }, [cardDetails, boardId]);
 
   //delete a card
@@ -76,7 +63,6 @@ const CardDetails = ({ removeCard }) => {
       console.log(error);
     }
   };
-  //edit a comment
   //delete a comment
   const removeComment = async (commentId) => {
     try {
@@ -94,7 +80,6 @@ const CardDetails = ({ removeCard }) => {
           {/*Card Details*/}
           <section className="md:col-span-2">
             <div className="relative overflow-hidden rounded-2xl border bg-white shadow-sm">
-              <div className="absolute inset-x-0 top-0 h-1 bg-gradient-to-r from-[#3C75A6] via-[#2BB8A6] to-[#3C75A6]" />
               <div className="absolute inset-x-0 top-0 h-1 bg-gradient-to-r from-[#3C75A6] via-[#2BB8A6] to-[#3C75A6]" />
 
               <div className="p-5 md:p-6">
@@ -116,8 +101,6 @@ const CardDetails = ({ removeCard }) => {
                 {loading ? (
                   <div className="animate-pulse space-y-4">
                     <div className="h-6 w-2/3 rounded bg-gray-200" />
-                    <div className="h-4 rounded bg-gray-100" />
-                    <div className="h-4 w-5/6 rounded bg-gray-100" />
                   </div>
                 ) : cardDetails ? (
                   <div className="space-y-5">

@@ -3,6 +3,7 @@ import { Link } from "react-router";
 import * as boardServices from "../../services/boardServices";
 import { useContext } from "react";
 import { UserContext } from "../../contexts/UserContext";
+import { findUserById } from "../../Utilities/usersHelper";
 import CommentForm from "../CommentForm/CommentForm";
 
 const Comment = ({ comment, boardId, cardId, removeComment }) => {
@@ -10,17 +11,6 @@ const Comment = ({ comment, boardId, cardId, removeComment }) => {
   const { user } = useContext(UserContext);
   //console.log(comment.author);
   const userId = comment.author;
-
-  const findUserById = async (boardId, userId) => {
-    try {
-      const userDetails = await boardServices.getUserById(boardId, userId);
-      //console.log("user",userDetails);
-      return userDetails;
-    } catch (error) {
-      console.error("Error fetching user by ID:", error);
-      throw error;
-    }
-  };
 
   useEffect(() => {
     const fetchAuthor = async () => {
