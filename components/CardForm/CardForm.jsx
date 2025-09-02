@@ -83,6 +83,19 @@ const CardForm = ({addCardToColumn, editCard}) => {
       </h2>
 
       <form onSubmit={handleSubmit} className="space-y-5 max-w-sm mx-auto">
+        {/* completed still to do */}
+        {/* <div> */}
+          {/* <label htmlFor="completed" className="block text-sm font-medium text-gray-700 mb-1">
+            Mark as Completed
+          </label>
+          <input
+            type="checkbox"
+            name="completed"
+            checked={formData.completed}
+            onChange={handleChange}
+            className="h-4 w-4 border-gray-300 rounded focus:ring-[#F36A1B] focus:outline-none"
+          />
+        </div> */}
         <div>
           <label
             htmlFor="title"

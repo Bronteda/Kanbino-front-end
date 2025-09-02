@@ -2,7 +2,9 @@ import { useParams } from "react-router";
 import { Link } from "react-router";
 import { useState, useEffect } from "react";
 import * as boardServices from "../../services/boardServices";
-import Card from "../Card/Card";
+import * as cardServices from "../../services/cardServices";
+import Column from "../Column/Column";
+import { DragDropContext } from "@hello-pangea/dnd";
 
 const Board = ({ removeColumn }) => {
   const { boardId } = useParams();
@@ -11,6 +13,17 @@ const Board = ({ removeColumn }) => {
 
   const handleRemoveColumn = async (boardId, columnId) => {
     try {
+      // Re-fetch board before attempting to delete column
+      const refreshedBoard = await boardServices.getBoardById(boardId);
+      const column = refreshedBoard.currentBoard.columns.find(
+        (col) => col._id === columnId
+      );
+      if (column && column.cardIds.length > 0) {
+        alert(
+          "You cannot delete a column that contains cards. Please remove all cards first."
+        );
+        return;
+      }
       await removeColumn(boardId, columnId);
       const boardData = await boardServices.getBoardById(boardId);
       setBoard(boardData.currentBoard);
@@ -44,111 +57,134 @@ const Board = ({ removeColumn }) => {
     );
   if (!board) return <p className="p-6 text-gray-600">Board not found</p>;
 
+  const onDragEnd = async (result) => {
+    const { destination, source, draggableId } = result;
+    if (!destination) return; // Dropped outside a droppable area , meaning outside our columns
+
+    //dropped in the same place - do nothing
+    //check both column from and to same and that place in column same
+    if (
+      destination.droppableId === source.droppableId &&
+      destination.index === source.index
+    ) {
+      return;
+    }
+
+    //find source and destiantion columns
+    const sourceColumnIdx = board.columns.findIndex(
+      (column) => column._id === source.droppableId
+    );
+    const destinationColumnIdx = board.columns.findIndex(
+      (column) => column._id === destination.droppableId
+    );
+    if (sourceColumnIdx === -1 || destinationColumnIdx === -1) return;
+
+    //copy columns
+    const newColumns = board.columns.map((column) => ({
+      ...column,
+      cardIds: [...column.cardIds],
+    }));
+    //remove card from source
+    const cardId = newColumns[sourceColumnIdx].cardIds[source.index];
+    newColumns[sourceColumnIdx].cardIds.splice(source.index, 1);
+    //insert card into destination
+    newColumns[destinationColumnIdx].cardIds.splice(
+      destination.index,
+      0,
+      cardId
+    );
+
+    //update the board state
+    setBoard({ ...board, columns: newColumns });
+
+    try {
+      await cardServices.moveCard(
+        cardId,
+        source.droppableId,
+        destination.droppableId,
+        destination.index
+      );
+    } catch (error) {
+      console.error("Failed to move card:", error);
+    }
+  };
+
   return (
-    <div className="max-w-7xl mx-auto p-6">
-      {/* Header */}
-      <div className="mb-6">
-        <h4 className="text-2xl font-bold text-gray-900">{board.title}</h4>
-        <div className="mt-2 text-sm text-gray-600 space-x-4">
-          <span>
-            <strong>Due Date:</strong>{" "}
-            {new Date(board.dueDate).toLocaleDateString()}
-          </span>
-          <span>
-            <strong>Start Date:</strong>{" "}
-            {new Date(board.startDate).toLocaleDateString()}
-          </span>
-        </div>
-        <div>
-          <Link
-            className="text-blue-500 hover:underline"
-            to={`/boards/${board._id}/members`}
-          >
-            Members 🤼‍♂️
-          </Link>
-        </div>
-      </div>
+    <>
+      <div className="min-h-screen bg-slate-50/60">
+        <div className="max-w-7xl mx-auto p-6">
+          {/* Header */}
+          <div className="sticky top-0 z-10 -mx-6 mb-6 border-b border-gray-100 bg-white/70 px-6 py-4 backdrop-blur supports-[backdrop-filter]:bg-white/60">
+            <h4 className="text-2xl font-bold text-gray-900">{board.title}</h4>
 
-      <div className="flex gap-4 overflow-x-auto pb-4">
-        {board && Array.isArray(board.columns) && board.columns.length > 0 ? (
-          board.columns.map((column) => (
-            <div
-              key={column._id}
-              className="w-80 min-w-[18rem] bg-gray-50 border border-gray-200 rounded-xl p-3 shadow-sm flex-shrink-0"
-            >
-              {/* Column */}
-              <div className="mb-3">
-                <h5 className="text-lg font-semibold text-gray-800">
-                  {column.title}
-                </h5>
-                {/* Remove icon only shows if no cards in column */}
-                {column.cardIds.length === 0 && (
-                  <button
-                    onClick={() => handleRemoveColumn(boardId, column._id)}
-                    className="h-4 w-4 flex items-center justify-center bg-[#F36A1B] text-white text-sm font-bold  hover:bg-[#3C75A6] transition-colors"
-                  >
-                    ×
-                  </button>
-                )}
-                <Link to={`/boards/${board._id}/column/${column._id}`}>
-                  <button>Edit Column</button>
-                </Link>
-              </div>
+            <div className="mt-3 flex flex-wrap items-center gap-3 text-sm text-gray-600">
+              <span className="inline-flex items-center gap-2 rounded-full bg-gray-100 px-3 py-1">
+                <strong className="font-semibold text-gray-700">Due</strong>
+                {new Date(board.dueDate).toLocaleDateString()}
+              </span>
+              <span className="inline-flex items-center gap-2 rounded-full bg-gray-100 px-3 py-1">
+                <strong className="font-semibold text-gray-700">Start</strong>
+                {new Date(board.startDate).toLocaleDateString()}
+              </span>
 
-              {/* Cards stack */}
-              <div className="space-y-3">
-                {column.cardIds.length > 0 ? (
-                  column.cardIds.map((cardId) => (
-                    <div
-                      key={cardId}
-                      className="bg-white rounded-lg border border-gray-200 shadow p-3"
-                    >
-                      {/* Your existing Card component renders card content */}
-                      <Card
-                        cardId={cardId}
+              <Link
+                className="ml-auto inline-flex items-center gap-2 rounded-full border border-[#3C75A6]/20 bg-white px-3 py-1.5 text-sm font-medium text-[#3C75A6] shadow-sm hover:border-[#3C75A6] hover:bg-[#3C75A6]/5"
+                to={`/boards/${board._id}/members`}
+              >
+                Members 🤼‍♂️
+              </Link>
+            </div>
+          </div>
+
+          {/* DragDropContext should wrap all columns, not each column */}
+          <DragDropContext onDragEnd={onDragEnd}>
+            <div className="relative">
+              {/* subtle edge fades for the horizontal scroll */}
+              <div className="pointer-events-none absolute inset-y-0 left-0 w-10 bg-gradient-to-r from-slate-50/60 to-transparent" />
+              <div className="pointer-events-none absolute inset-y-0 right-0 w-10 bg-gradient-to-l from-slate-50/60 to-transparent" />
+              <div
+                className="flex gap-4 overflow-x-auto pb-4 pr-2"
+                style={{ minHeight: "1px", scrollSnapType: "x mandatory" }}
+              >
+                {board &&
+                Array.isArray(board.columns) &&
+                board.columns.length > 0 ? (
+                  board.columns.map((column) => (
+                    <div style={{ scrollSnapAlign: "start" }} key={column._id}>
+                      <Column
+                        column={column}
                         boardId={boardId}
-                        columnId={column._id}
+                        handleRemoveColumn={handleRemoveColumn}
                       />
                     </div>
                   ))
                 ) : (
-                  <p className="text-sm text-gray-400 italic">No cards yet</p>
+                  <p className="text-sm italic text-gray-400">No columns yet</p>
                 )}
+
+                <Link to={`/boards/${board._id}/column`}>
+                  <button
+                    type="button"
+                    className="w-80 min-w-[18rem] h-fit self-start rounded-xl border-2 border-dashed border-gray-300 bg-white p-3 text-left text-gray-500 transition-colors hover:border-[#3C75A6] hover:text-[#3C75A6] shadow-sm"
+                  >
+                    + Add a column
+                  </button>
+                </Link>
               </div>
-
-              {/* Add card */}
-              <Link to={`/boards/${board._id}/column/${column._id}/card`}>
-                <button
-                  type="button"
-                  className="mt-4 w-full text-left px-3 py-2 rounded-lg bg-white border border-dashed border-gray-300 hover:border-[#3C75A6] hover:text-[#3C75A6] transition-colors text-sm"
-                >
-                  + Add a card
-                </button>
-              </Link>
             </div>
-          ))
-        ) : (
-          <p className="text-sm text-gray-400 italic">No columns yet</p>
-        )}
+          </DragDropContext>
 
-        <Link to={`/boards/${board._id}/column`}>
-          <button
-            type="button"
-            className="w-80 min-w-[18rem] h-fit self-start bg-white border-2 border-dashed border-gray-300 rounded-xl p-3 text-left text-gray-500 hover:border-[#3C75A6] hover:text-[#3C75A6] transition-colors"
-          >
-            + Add a column
-          </button>
-        </Link>
+          <div className="mt-8 flex justify-end">
+            <Link
+              to={`/`}
+              className="rounded-full bg-[#3C75A6] px-6 py-2 font-semibold text-white shadow hover:bg-[#F36A1B] transition-colors"
+            >
+              Back to Board
+            </Link>
+          </div>
+        </div>
       </div>
-      <div className="mt-8 flex justify-right">
-        <Link
-          to={`/`}
-          className="bg-[#3C75A6] text-white px-6 py-2 rounded-full font-semibold shadow hover:bg-[#F36A1B] transition-colors"
-        >
-          Back to Board
-        </Link>
-      </div>
-    </div>
+    </>
   );
 };
 

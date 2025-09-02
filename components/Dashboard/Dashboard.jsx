@@ -11,9 +11,9 @@ const Dashboard = ({ user, boards, deleteBoard }) => {
 
       {boards && boards.length > 0 ? (
         <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-          {boards.map((board) => (
+          {boards.map((board, index) => (
             <div
-              key={board._id}
+              key={board._id ? board._id : `board-${index}`}
               className="bg-gray-50 border border-gray-200 shadow-lg rounded-2xl p-6 hover:shadow-xl transition-shadow"
             >
               <Link to={`/boards/${board._id}`}>
@@ -37,12 +37,13 @@ const Dashboard = ({ user, boards, deleteBoard }) => {
                   </span>
                 </p>
               </Link>
-
-              <div className="mt-4 flex">
-                <button
-                  className="w-full px-2 py-2 bg-[#F36A1B] text-white font-medium rounded-lg hover:bg-[#3C75A6] transition-colors mr-2"
-                  onClick={() => navigate(`/boards/${board._id}/edit`)}
-                >
+              {/* Add that the owner of the board can only edit or delete the board */}
+              {user._id === board.owner && (
+                <div className="mt-4 flex">
+                  <button
+                    className="w-full px-2 py-2 bg-[#F36A1B] text-white font-medium rounded-lg hover:bg-[#3C75A6] transition-colors mr-2"
+                    onClick={() => navigate(`/boards/${board._id}/edit`)}
+                  >
                   Edit Board
                 </button>
                 <button
@@ -55,7 +56,9 @@ const Dashboard = ({ user, boards, deleteBoard }) => {
                   Delete Board
                 </button>
               </div>
+              )}
             </div>
+            
           ))}
         </div>
       ) : (
