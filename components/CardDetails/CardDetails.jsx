@@ -76,9 +76,9 @@ const CardDetails = ({ removeCard }) => {
     return (
     <div className="min-h-screen bg-[#f7fbfe] py-8 px-4">
       <div className="max-w-4xl mx-auto">
-        {/* Card Details */}
+
         <div className="bg-white rounded-2xl shadow-lg border border-[#e3eaf3] mb-8 relative overflow-hidden">
-          {/* Gradient Top Border */}
+
           <div className="absolute left-0 right-0 top-0 h-3 rounded-t-2xl bg-[#3C75A6] z-10" />
           <div className="relative z-20 p-8">
             <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4 mb-6">
@@ -109,7 +109,7 @@ const CardDetails = ({ removeCard }) => {
               </div>
             ) : cardDetails ? (
               <div className="space-y-6">
-                {/* Title & Status */}
+
                 <div className="flex flex-wrap items-center gap-3">
                   <h3 className="text-xl font-semibold text-gray-900">
                     {cardDetails.title}
@@ -125,7 +125,7 @@ const CardDetails = ({ removeCard }) => {
                     {cardDetails.completed ? "Completed" : "In Progress"}
                   </span>
                 </div>
-                {/* Description */}
+
                 <div>
                   <h4 className="mb-1 text-sm font-medium text-gray-600">
                     Description
@@ -182,7 +182,6 @@ const CardDetails = ({ removeCard }) => {
           </div>
         </div>
 
-        {/* Back Button */}
         <div className="flex justify-end">
           <Link to={`/boards/${boardId}`}>
             <button className="rounded-md bg-[#3C75A6] px-6 py-2 text-white font-semibold shadow hover:bg-[#335f86] transition-colors">

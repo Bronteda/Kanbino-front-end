@@ -90,7 +90,7 @@ const CardForm = ({addCardToColumn, editCard}) => {
       </h2>
 
       <form onSubmit={handleSubmit} className="space-y-5 max-w-sm mx-auto">
-        {/* completed still to do */}
+   
        <div> 
            <label htmlFor="completed" className="block text-sm font-medium text-gray-700 mb-1">
             Mark as Completed
