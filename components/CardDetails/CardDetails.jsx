@@ -10,7 +10,6 @@ const CardDetails = ({ removeCard }) => {
   const { boardId, cardId } = useParams();
   const [cardDetails, setCardDetails] = useState(null);
   const [assignedUser, setAssignedUser] = useState(null);
-  const [completed, setCompleted] = useState(false);
   const [loading, setLoading] = useState(true);
   const [userLoading, setUserLoading] = useState(false);
   const navigate = useNavigate();
@@ -32,6 +31,7 @@ const CardDetails = ({ removeCard }) => {
   useEffect(() => {
     fetchCardDetails();
   }, [cardId]);
+
 
   //find assigned person
   useEffect(() => {
@@ -117,12 +117,12 @@ const CardDetails = ({ removeCard }) => {
                   <span
                     className={[
                       "inline-flex items-center rounded-full px-3 py-1 text-xs font-semibold",
-                      completed
+                      cardDetails.completed
                         ? "bg-green-100 text-green-700"
                         : "bg-yellow-100 text-yellow-700",
                     ].join(" ")}
                   >
-                    {completed ? "Completed" : "In Progress"}
+                    {cardDetails.completed ? "Completed" : "In Progress"}
                   </span>
                 </div>
                 {/* Description */}

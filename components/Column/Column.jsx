@@ -1,8 +1,29 @@
 import { Link } from "react-router";
+import { useState, useEffect } from "react";
+import * as boardServices from "../../services/boardServices";
 import { Droppable, Draggable } from "@hello-pangea/dnd";
 import Card from "../Card/Card";
 
 const Column = ({ column, boardId, handleRemoveColumn }) => {
+  const [incompletedCards, setIncompletedCards] = useState([]);
+
+  const fetchIncompletedCards = async () => {
+    try {
+      const allCards = await boardServices.getCardsByBoardId(boardId);
+      //console.log(allCards.cards);
+      const incompletedCardsFromBoard = allCards.cards.filter(
+        (card) => card.completed === false && column.cardIds.includes(card._id)
+      );
+      setIncompletedCards(incompletedCardsFromBoard);
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  useEffect(() => {
+    fetchIncompletedCards();
+  }, [boardId]);
+
   return (
     <div
       key={column._id}
@@ -32,9 +53,9 @@ const Column = ({ column, boardId, handleRemoveColumn }) => {
             {...provided.droppableProps}
             className="space-y-3"
           >
-            {column.cardIds.length > 0 ? (
-              column.cardIds.map((cardId, index) => (
-                <Draggable key={cardId} draggableId={cardId} index={index}>
+            {incompletedCards.length > 0 ? (
+              incompletedCards.map((card, index) => (
+                <Draggable key={card._id} draggableId={card._id} index={index}>
                   {(provided) => (
                     <div
                       ref={provided.innerRef}
@@ -43,7 +64,7 @@ const Column = ({ column, boardId, handleRemoveColumn }) => {
                       className="bg-white rounded-lg border border-gray-200 shadow p-3"
                     >
                       <Card
-                        cardId={cardId}
+                        cardId={card._id}
                         boardId={boardId}
                         columnId={column._id}
                       />

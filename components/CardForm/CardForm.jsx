@@ -8,6 +8,7 @@ const CardForm = ({addCardToColumn, editCard}) => {
     title: "",
     description: "",
     assignedTo: "",
+    completed: false,
   };
 
   const navigate = useNavigate();
@@ -29,8 +30,13 @@ const CardForm = ({addCardToColumn, editCard}) => {
   }, [boardId]);
 
   const handleChange = (event) => {
-    setFormData({ ...formData, [event.target.name]: event.target.value });
-  };
+    if(event.target.name === "completed"){
+      setFormData({ ...formData, [event.target.name]: event.target.checked });
+      return;
+    }else {
+      setFormData({ ...formData, [event.target.name]: event.target.value });
+    }
+  };  
 
   const handleSubmit = async (event) => {
     event.preventDefault();
@@ -67,6 +73,7 @@ const CardForm = ({addCardToColumn, editCard}) => {
             title: card.title,
             description: card.description,
             assignedTo: assignedId,
+            completed: card.completed || false,
           });
         } catch (error) {
           console.error("Error fetching card details:", error);
@@ -84,8 +91,8 @@ const CardForm = ({addCardToColumn, editCard}) => {
 
       <form onSubmit={handleSubmit} className="space-y-5 max-w-sm mx-auto">
         {/* completed still to do */}
-        {/* <div> */}
-          {/* <label htmlFor="completed" className="block text-sm font-medium text-gray-700 mb-1">
+       <div> 
+           <label htmlFor="completed" className="block text-sm font-medium text-gray-700 mb-1">
             Mark as Completed
           </label>
           <input
@@ -95,7 +102,7 @@ const CardForm = ({addCardToColumn, editCard}) => {
             onChange={handleChange}
             className="h-4 w-4 border-gray-300 rounded focus:ring-[#F36A1B] focus:outline-none"
           />
-        </div> */}
+        </div> 
         <div>
           <label
             htmlFor="title"

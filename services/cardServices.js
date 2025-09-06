@@ -19,6 +19,7 @@ const getAllCards = async () => {
   }
 };
 
+
 const getCardById = async (cardId) => {
   try {
     const response = await axios.get(`${BASEURL}/${cardId}`, {
@@ -62,6 +63,7 @@ const moveCard = async (cardId, fromColumnId, toColumnId, toIndex) => {
 
 const editCard = async (cardId, cardData) => {
   try {
+    //console.log("Editing card with data:", cardData);
     const response = await axios.put(`${BASEURL}/${cardId}`, cardData, {
       headers: {
         Authorization: `Bearer ${localStorage.getItem("token")}`,

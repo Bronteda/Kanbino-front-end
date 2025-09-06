@@ -7,6 +7,7 @@ import LandingPage from "../components/LandingPage/LandingPage";
 import Dashboard from "../components/Dashboard/Dashboard";
 import Board from "../components/Board/Board";
 import BoardForm from "../components/BoardForm/BoardForm";
+import CompletedCardsList from "../components/CompletedCardsList/CompletedCardsList";
 import ColumnForm from "../components/ColumnForm/ColumnForm";
 import CardForm from "../components/CardForm/CardForm";
 import CardDetails from "../components/CardDetails/CardDetails";
@@ -137,6 +138,7 @@ const App = () => {
     try {
       setLoading(true);
       const updatedCard = await cardServices.editCard(cardId, cardData);
+      console.log(updatedCard);
       setLoading(false);
       navigate(`/boards/${updatedCard.boardId}`);
     } catch (error) {
@@ -191,6 +193,11 @@ const App = () => {
             <Route
               path="/boards"
               element={<BoardForm createBoard={createBoard} />}
+            />
+            {/* Show completed cards */}
+            <Route
+              path="/boards/:boardId/completed"
+              element={<CompletedCardsList />}
             />
             {/* Show board members */}
             <Route

@@ -110,11 +110,11 @@ const Board = ({ removeColumn }) => {
             <div className="mt-3 flex flex-wrap items-center gap-3 text-sm text-gray-600">
               <span className="inline-flex items-center gap-2 rounded-full bg-gray-100 px-3 py-1">
                 <strong className="font-semibold text-gray-700">Due</strong>
-                {new Date(board.dueDate).toLocaleDateString()}
+                {board.dueDate ? new Date(board.dueDate).toLocaleDateString() : "No due date"}
               </span>
               <span className="inline-flex items-center gap-2 rounded-full bg-gray-100 px-3 py-1">
                 <strong className="font-semibold text-gray-700">Start</strong>
-                {new Date(board.startDate).toLocaleDateString()}
+                {board.startDate ? new Date(board.startDate).toLocaleDateString() : "No start date"}
               </span>
 
               <Link
@@ -123,15 +123,19 @@ const Board = ({ removeColumn }) => {
               >
                 Members 🤼‍♂️
               </Link>
+              <Link
+                className="inline-flex items-center gap-2 rounded-full border border-[#3C75A6]/20 bg-white px-3 py-1.5 text-sm font-medium text-[#3C75A6] shadow-sm hover:border-[#3C75A6] hover:bg-[#3C75A6]/5"
+                to={`/boards/${board._id}/completed`}
+              >
+                Completed Cards ✔️
+              </Link>
             </div>
           </div>
 
           {/* DragDropContext should wrap all columns, not each column */}
           <DragDropContext onDragEnd={onDragEnd}>
             <div className="relative">
-              {/* subtle edge fades for the horizontal scroll */}
 
-              {/* Smaller board and columns using Tailwind only */}
               <div className="flex flex-nowrap gap-2 overflow-x-auto pb-2">
                 {board &&
                 Array.isArray(board.columns) &&

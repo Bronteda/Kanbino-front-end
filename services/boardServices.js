@@ -341,6 +341,24 @@ const addCardToColumn = async (boardId, columnId, cardData) => {
   }
 };
 
+const getCardsByBoardId = async (boardId) => {
+  try {
+    const response = await axios.get(`${BASEURL}/${boardId}/cards`, {
+      headers: {
+        Authorization: `Bearer ${localStorage.getItem("token")}`,
+      },
+    });
+
+    if (response.data.error) {
+      throw new Error(response.data.error);
+    }
+
+    return response.data;
+  } catch (error) {
+    throw new Error(error);
+  }
+};
+
 export {
   getAllUsers,
   getAllBoards,
@@ -358,4 +376,5 @@ export {
   getUsersOnBoard,
   getUserById,
   addCardToColumn,
+  getCardsByBoardId,
 };
