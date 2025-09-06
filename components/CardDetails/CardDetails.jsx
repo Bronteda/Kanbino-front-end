@@ -73,121 +73,125 @@ const CardDetails = ({ removeCard }) => {
     }
   };
 
-  return (
-    <>
-      <div className="max-w-5xl mx-auto px-4 py-6">
-        <div className="grid gap-6 md:grid-cols-3">
-          {/*Card Details*/}
-          <section className="md:col-span-2">
-            <div className="relative overflow-hidden rounded-2xl border bg-white shadow-sm">
-              <div className="absolute inset-x-0 top-0 h-1 bg-gradient-to-r from-[#3C75A6] via-[#2BB8A6] to-[#3C75A6]" />
-
-              <div className="p-5 md:p-6">
-                <div className="mb-4 flex items-center justify-between">
-                  <h2 className="text-2xl font-bold text-[#3C75A6]">
-                    Card Details
-                  </h2>
-                  <Link to={`/boards/${boardId}/card/${cardId}/edit`}>
-                    <button
-                      className="inline-flex items-center gap-2 rounded-full bg-[#3C75A6] px-4 py-2 text-white shadow hover:bg-[#335f86] transition-colors"
-                      aria-label="Edit Card"
-                    >
-                      ✏️ <span>Edit Card</span>
-                    </button>
-                  </Link>
-                  <button onClick={handleDeleteCard}>❌</button>
-                </div>
-
-                {loading ? (
-                  <div className="animate-pulse space-y-4">
-                    <div className="h-6 w-2/3 rounded bg-gray-200" />
-                  </div>
-                ) : cardDetails ? (
-                  <div className="space-y-5">
-                    {/* Title */}
-                    <div className="flex flex-wrap items-center gap-3">
-                      <h3 className="text-xl font-semibold text-gray-900">
-                        {cardDetails.title}
-                      </h3>
-                      <span
-                        className={[
-                          "inline-flex items-center rounded-full px-2.5 py-1 text-xs font-medium",
-                          completed
-                            ? "bg-green-100 text-green-700"
-                            : "bg-slate-100 text-slate-700",
-                        ].join(" ")}
-                      >
-                        {completed ? "Completed" : "In Progress"}
-                      </span>
-                    </div>
-
-                    {/* Description */}
-                    <div>
-                      <h4 className="mb-1 text-sm font-medium text-gray-600">
-                        Description
-                      </h4>
-                      <p className="whitespace-pre-wrap rounded-lg border bg-slate-50 p-3 text-sm text-gray-800">
-                        {cardDetails.description || "—"}
-                      </p>
-                    </div>
-
-                    {/* Assigned To */}
-                    <div className="flex flex-wrap items-center gap-2">
-                      <h4 className="text-sm font-medium text-gray-600">
-                        Assigned To
-                      </h4>
-                      <span className="inline-flex items-center rounded-full border bg-white px-3 py-1 text-sm text-gray-800">
-                        {cardDetails.assignedTo
-                          ? userLoading
-                            ? "Loading..."
-                            : assignedUser?.name || "Unassigned"
-                          : "Unassigned"}
-                      </span>
-                    </div>
-                  </div>
-                ) : (
-                  <p className="text-sm text-gray-600">Card not found.</p>
-                )}
+    return (
+    <div className="min-h-screen bg-gradient-to-br from-[#f7fbfe] via-white to-[#f7fbfe] py-8 px-4">
+      <div className="max-w-4xl mx-auto">
+        {/* Card Details */}
+        <div className="bg-white rounded-2xl shadow-lg border border-[#e3eaf3] mb-8 relative overflow-hidden">
+          {/* Gradient Top Border */}
+          <div className="absolute left-0 right-0 top-0 h-3 rounded-t-2xl bg-gradient-to-r from-[#3C75A6] via-[#2BB8A6] to-[#3C75A6] z-10" />
+          <div className="relative z-20 p-8">
+            <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4 mb-6">
+              <h2 className="text-3xl font-bold text-[#3C75A6]">Card Details</h2>
+              <div className="flex gap-2">
+                <Link to={`/boards/${boardId}/card/${cardId}/edit`}>
+                  <button
+                    className="inline-flex items-center gap-2 rounded-full bg-[#3C75A6] px-4 py-2 text-white shadow hover:bg-[#335f86] transition-colors"
+                    aria-label="Edit Card"
+                  >
+                    ✏️ <span>Edit</span>
+                  </button>
+                </Link>
+                <button
+                  onClick={handleDeleteCard}
+                  className="inline-flex items-center gap-2 rounded-full bg-red-100 px-4 py-2 text-red-700 shadow hover:bg-red-200 transition-colors"
+                  aria-label="Delete Card"
+                >
+                  ❌ <span>Delete</span>
+                </button>
               </div>
             </div>
-          </section>
-
-          {/* Comments */}
-          <aside className="md:col-span-1">
-            <div className="rounded-2xl border bg-white shadow-sm">
-              <div className="border-b px-5 py-3">
-                <h2 className="text-base font-semibold text-gray-900">
-                  Comments
-                </h2>
+            {loading ? (
+              <div className="animate-pulse space-y-4">
+                <div className="h-8 w-2/3 rounded bg-gray-200" />
+                <div className="h-5 w-1/2 rounded bg-gray-100" />
+                <div className="h-16 w-full rounded bg-gray-100" />
               </div>
-
-              <div className="p-5 space-y-4">
-                {cardDetails && cardDetails.comments?.length > 0 ? (
-                  <ul className="space-y-3">
-                    {cardDetails.comments.map((comment) => (
-                      <Comment
-                        key={comment._id}
-                        comment={comment}
-                        boardId={boardId}
-                        cardId={cardId}
-                        removeComment={removeComment}
-                      />
-                    ))}
-                  </ul>
-                ) : (
-                  <p className="text-sm text-gray-600">No comments available</p>
-                )}
-
-                {/* Add a comment */}
-                <div className="rounded-xl border bg-white p-3">
-                  <CommentForm handleAddComment={handleAddComment} />
+            ) : cardDetails ? (
+              <div className="space-y-6">
+                {/* Title & Status */}
+                <div className="flex flex-wrap items-center gap-3">
+                  <h3 className="text-xl font-semibold text-gray-900">
+                    {cardDetails.title}
+                  </h3>
+                  <span
+                    className={[
+                      "inline-flex items-center rounded-full px-3 py-1 text-xs font-semibold",
+                      completed
+                        ? "bg-green-100 text-green-700"
+                        : "bg-yellow-100 text-yellow-700",
+                    ].join(" ")}
+                  >
+                    {completed ? "Completed" : "In Progress"}
+                  </span>
+                </div>
+                {/* Description */}
+                <div>
+                  <h4 className="mb-1 text-sm font-medium text-gray-600">
+                    Description
+                  </h4>
+                  <p className="whitespace-pre-wrap rounded-lg border bg-slate-50 p-4 text-base text-gray-800">
+                    {cardDetails.description || "—"}
+                  </p>
+                </div>
+                {/* Assigned To */}
+                <div className="flex items-center gap-2">
+                  <h4 className="text-sm font-medium text-gray-600">
+                    Assigned To:
+                  </h4>
+                  <span className="inline-flex items-center rounded-full border bg-white px-3 py-1 text-sm text-gray-800">
+                    {cardDetails.assignedTo
+                      ? userLoading
+                        ? "Loading..."
+                        : assignedUser?.name || "Unassigned"
+                      : "Unassigned"}
+                  </span>
                 </div>
               </div>
+            ) : (
+              <p className="text-sm text-gray-600">Card not found.</p>
+            )}
+          </div>
+        </div>
+
+        {/* Comments Section */}
+        <div className="bg-white rounded-2xl shadow-lg border border-[#e3eaf3] mb-8">
+          <div className="border-b px-8 py-4">
+            <h2 className="text-lg font-semibold text-[#3C75A6]">Comments</h2>
+          </div>
+          <div className="p-8 space-y-6">
+            {cardDetails && cardDetails.comments?.length > 0 ? (
+              <ul className="space-y-4">
+                {cardDetails.comments.map((comment) => (
+                  <Comment
+                    key={comment._id}
+                    comment={comment}
+                    boardId={boardId}
+                    cardId={cardId}
+                    removeComment={removeComment}
+                  />
+                ))}
+              </ul>
+            ) : (
+              <p className="text-sm text-gray-600">No comments available</p>
+            )}
+            {/* Add a comment */}
+            <div className="rounded-xl border bg-slate-50 p-4">
+              <CommentForm handleAddComment={handleAddComment} />
             </div>
-          </aside>
+          </div>
+        </div>
+
+        {/* Back Button */}
+        <div className="flex justify-end">
+          <Link to={`/boards/${boardId}`}>
+            <button className="rounded-md bg-[#3C75A6] px-6 py-2 text-white font-semibold shadow hover:bg-[#335f86] transition-colors">
+              Back to Board
+            </button>
+          </Link>
         </div>
       </div>
-    </>
+    </div>
   );
 };
 
