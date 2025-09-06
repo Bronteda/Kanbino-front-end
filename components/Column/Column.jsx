@@ -1,5 +1,4 @@
 import { Link } from "react-router";
-// ...existing code...
 import { Droppable, Draggable } from "@hello-pangea/dnd";
 import Card from "../Card/Card";
 
