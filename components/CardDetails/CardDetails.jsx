@@ -74,12 +74,12 @@ const CardDetails = ({ removeCard }) => {
   };
 
     return (
-    <div className="min-h-screen bg-gradient-to-br from-[#f7fbfe] via-white to-[#f7fbfe] py-8 px-4">
+    <div className="min-h-screen bg-[#f7fbfe] py-8 px-4">
       <div className="max-w-4xl mx-auto">
         {/* Card Details */}
         <div className="bg-white rounded-2xl shadow-lg border border-[#e3eaf3] mb-8 relative overflow-hidden">
           {/* Gradient Top Border */}
-          <div className="absolute left-0 right-0 top-0 h-3 rounded-t-2xl bg-gradient-to-r from-[#3C75A6] via-[#2BB8A6] to-[#3C75A6] z-10" />
+          <div className="absolute left-0 right-0 top-0 h-3 rounded-t-2xl bg-[#3C75A6] z-10" />
           <div className="relative z-20 p-8">
             <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4 mb-6">
               <h2 className="text-3xl font-bold text-[#3C75A6]">Card Details</h2>

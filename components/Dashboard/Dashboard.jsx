@@ -5,68 +5,63 @@ const Dashboard = ({ user, boards, deleteBoard }) => {
   const navigate = useNavigate();
 
   return (
-    <div className="max-w-5xl mx-auto p-6">
-      <h1 className="text-3xl font-bold mb-2">Your Dashboard</h1>
-      <h3 className="text-lg text-gray-600 mb-6">Welcome {user.name}</h3>
+    <div className="max-w-6xl mx-auto px-4 py-8">
+      <header className="mb-8">
+        <h1 className="text-4xl font-extrabold text-[#3C75A6] mb-2">Your Dashboard</h1>
+        <h3 className="text-lg text-gray-700">Welcome, <span className="font-semibold text-[#F36A1B]">{user.name}</span></h3>
+      </header>
 
       {boards && boards.length > 0 ? (
-        <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+        <section className="grid gap-8 sm:grid-cols-2 lg:grid-cols-3">
           {boards.map((board, index) => (
             <div
               key={board._id ? board._id : `board-${index}`}
-              className="bg-gray-50 border border-gray-200 shadow-lg rounded-2xl p-6 hover:shadow-xl transition-shadow"
+              className="bg-white border border-gray-200 rounded-2xl shadow-md hover:shadow-xl transition-shadow flex flex-col"
             >
-              <Link to={`/boards/${board._id}`}>
-                <h4 className="text-xl font-semibold mb-3 text-[#3C75A6]">
-                  {board.title}
-                </h4>
-                <p className="text-sm text-gray-600 mb-1">
-                  Due Date:{" "}
-                  <span className="font-medium">
-                    {board.dueDate
-                      ? new Date(board.dueDate).toLocaleDateString()
-                      : "No date"}
-                  </span>
-                </p>
-                <p className="text-sm text-gray-600 mb-4">
-                  Start Date:{" "}
-                  <span className="font-medium">
-                    {board.startDate
-                      ? new Date(board.startDate).toLocaleDateString()
-                      : "No date"}
-                  </span>
-                </p>
+              <Link to={`/boards/${board._id}`} className="flex-1">
+                <div className="p-6">
+                  <h4 className="text-2xl font-bold text-[#3C75A6] mb-2">{board.title}</h4>
+                  <div className="text-sm text-gray-600 space-y-1">
+                    <div>
+                      <span className="font-medium text-gray-800">Due Date:</span>{" "}
+                      {board.dueDate ? new Date(board.dueDate).toLocaleDateString() : <span className="italic text-gray-400">No date</span>}
+                    </div>
+                    <div>
+                      <span className="font-medium text-gray-800">Start Date:</span>{" "}
+                      {board.startDate ? new Date(board.startDate).toLocaleDateString() : <span className="italic text-gray-400">No date</span>}
+                    </div>
+                  </div>
+                </div>
               </Link>
               {user._id === board.ownerId && (
-                <div className="mt-4 flex">
+                <div className="flex gap-2 px-6 pb-6">
                   <button
-                    className="w-full px-2 py-2 bg-[#F36A1B] text-white font-medium rounded-lg hover:bg-[#3C75A6] transition-colors mr-2"
+                    className="flex-1 px-3 py-2 bg-[#F36A1B] text-white font-semibold rounded-lg hover:bg-[#3C75A6] transition-colors"
                     onClick={() => navigate(`/boards/${board._id}/edit`)}
                   >
-                  Edit Board
-                </button>
-                <button
-                  className="w-full px-4 py-2 bg-[#F36A1B] text-white font-medium rounded-lg hover:bg-[#3C75A6] transition-colors"
-                  onClick={async () => {
-                    await deleteBoard(board._id);
-                    navigate(`/`);
-                  }}
-                >
-                  Delete Board
-                </button>
-              </div>
+                    Edit
+                  </button>
+                  <button
+                    className="flex-1 px-3 py-2 bg-[#F36A1B] text-white font-semibold rounded-lg hover:bg-[#3C75A6] transition-colors"
+                    onClick={async () => {
+                      await deleteBoard(board._id);
+                      navigate(`/`);
+                    }}
+                  >
+                    Delete
+                  </button>
+                </div>
               )}
             </div>
-            
           ))}
-        </div>
+        </section>
       ) : (
-        <p className="text-gray-500 italic">No boards available</p>
+        <p className="text-gray-400 italic text-center mt-12">No boards available</p>
       )}
 
-      <div className="mt-8">
+      <div className="mt-10 flex justify-center">
         <Link to="/boards">
-          <button className="px-5 py-2 bg-[#F36A1B] text-white font-medium rounded-xl hover:bg-[#3C75A6] transition-colors shadow-md">
+          <button className="px-6 py-3 bg-[#F36A1B] text-white font-bold rounded-xl hover:bg-[#3C75A6] transition-colors shadow-lg">
             Add New Board
           </button>
         </Link>
