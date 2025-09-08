@@ -249,6 +249,7 @@ const App = () => {
             <Route path="/sign-in" element={<SignInForm />} />
           </>
         )}
+      <Route path="*" element={<h1>404 Not Found</h1>} />
       </Routes>
     </>
   );
