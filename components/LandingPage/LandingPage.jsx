@@ -1,11 +1,10 @@
 const LandingPage = () => {
   return (
     <div className="min-h-screen flex flex-col items-center justify-center bg-gray-50 text-gray-800 px-4">
-
       <img
         src="/images/kanbinologo.png?v=2"
         alt="Kanbino Logo"
-        className="h-70 w-auto mb-6"
+        className="block h-[80px] w-auto mb-6 border"
       />
 
       <h1 className="text-4xl sm:text-5xl font-extrabold mb-4">
