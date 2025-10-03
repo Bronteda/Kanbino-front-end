@@ -3,7 +3,7 @@ const LandingPage = () => {
     <div className="min-h-screen flex flex-col items-center justify-center bg-gray-50 text-gray-800 px-4">
 
       <img
-        src="../../images/kanbinologo.png"
+        src="/images/kanbinologo.png"
         alt="Kanbino Logo"
         className="h-70 w-auto mb-6"
       />
