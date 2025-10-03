@@ -4,7 +4,7 @@ const LandingPage = () => {
       <img
         src="/images/kanbinologo.png?v=2"
         alt="Kanbino Logo"
-        className="block h-[80px] w-auto mb-6 border"
+        className="h-70 w-auto mb-6"
       />
 
       <h1 className="text-4xl sm:text-5xl font-extrabold mb-4">
